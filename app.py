@@ -14,7 +14,7 @@ st.set_page_config(
 # Initialize Anthropic client
 @st.cache_resource
 def get_anthropic_client():
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    api_key = os.environ.get("ANTHROPIC_API_KEY") or st.secrets.get("ANTHROPIC_API_KEY")
     if not api_key:
         st.error("⚠️ ANTHROPIC_API_KEY not found in environment variables!")
         st.stop()
