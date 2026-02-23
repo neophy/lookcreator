@@ -225,7 +225,7 @@ def generate_search_links(item: Dict) -> Dict:
     links = {
         "Amazon.in": f"https://www.amazon.in/s?k={search_query}",
         "Myntra": f"https://www.myntra.com/{search_query}",
-        "Zara": f"https://www.zara.com/in/en/search?searchTerm={query}",
+        "Zara": f"https://www.zara.com/in/en/search?searchTerm={search_query}",
         "Ajio": f"https://www.ajio.com/search/?text={search_query}",
     }
     if any(kw in item.get('type', '').lower() for kw in ['bag', 'jewelry', 'accessory', 'sunglasses', 'watch']):
