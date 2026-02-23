@@ -224,8 +224,8 @@ def generate_search_links(item: Dict) -> Dict:
     search_query = item.get('search_keywords', '').replace(' ', '+')
     links = {
         "Amazon.in": f"https://www.amazon.in/s?k={search_query}",
-        "Flipkart": f"https://www.flipkart.com/search?q={search_query}",
         "Myntra": f"https://www.myntra.com/{search_query}",
+        "Zara": f"https://www.zara.com/in/en/search?searchTerm={query}",
         "Ajio": f"https://www.ajio.com/search/?text={search_query}",
     }
     if any(kw in item.get('type', '').lower() for kw in ['bag', 'jewelry', 'accessory', 'sunglasses', 'watch']):
@@ -495,7 +495,7 @@ def main():
     # Remove horizontal to avoid session state issues
     input_method = st.radio(
         "Choose input method:",
-        ["📁 Upload from computer", "🔗 Image URL", "🖼️ Example Images"]
+        [ "🔗 Image URL", "📁 Upload from computer", "🖼️ Example Images"]
     )
 
     image_url = None
@@ -558,75 +558,75 @@ def main():
         debug_log(f"Example selected: {selected}")
 
     # Analyze button
-    # has_input = bool(image_url) or bool(uploaded_bytes)
-    # if st.button("🔍 Analyze Look", type="primary", use_container_width=True, disabled=not has_input):
-    #     # Store original image for matching
-    #     original_image = uploaded_bytes if uploaded_bytes else image_url
-        
-    #     debug_log("=" * 50)
-    #     debug_log("STARTING ANALYSIS")
-    #     debug_log("=" * 50)
-        
-    #     try:
-    #         if uploaded_bytes:
-    #             result = analyze_via_upload_cached(uploaded_bytes, uploaded_media_type, client)
-    #         else:
-    #             result = analyze_via_url_cached(image_url, client)
-            
-    #         if result:
-    #             # Store results in session state
-    #             st.session_state['analysis_result'] = result
-    #             st.session_state['original_image'] = original_image
-    #         else:
-    #             st.error("Analysis returned no results")
-
-    #     except json.JSONDecodeError as e:
-    #         st.error(f"Failed to parse response: {e}")
-    #         debug_log(f"JSON error: {str(e)}")
-    #     except Exception as e:
-    #         st.error(f"Error analyzing image: {str(e)}")
-    #         debug_log(f"Error: {str(e)}")
-            
-    #         with st.expander("🔧 Error Details"):
-    #             st.code(str(e))
-
-    # # Display results if they exist in session state
-    # if 'analysis_result' in st.session_state and 'original_image' in st.session_state:
-    #     display_results(st.session_state['analysis_result'], st.session_state['original_image'])
-    # Analyze button
     has_input = bool(image_url) or bool(uploaded_bytes)
     if st.button("🔍 Analyze Look", type="primary", use_container_width=True, disabled=not has_input):
         # Store original image for matching
         original_image = uploaded_bytes if uploaded_bytes else image_url
         
         debug_log("=" * 50)
-        debug_log("USING HARDCODED ANALYSIS (TESTING)")
+        debug_log("STARTING ANALYSIS")
         debug_log("=" * 50)
         
-        # HARDCODED RESULT - Comment out Claude API calls
-        result = {
-            "items": [
-                {
-                    "type": "sweater",
-                    "color": "multicolor striped",
-                    "style": "cropped, v-neck",
-                    "material": "knit",
-                    "features": ["v-neck", "cropped length", "striped pattern"],
-                    "search_keywords": "striped cropped sweater v-neck multicolor knit top"
-                }
-            ],
-            "overall_style": "Casual colorful style",
-            "occasion": "Everyday casual wear"
-        }
-        
-        debug_log(f"✅ Using hardcoded result with {len(result.get('items', []))} items")
-        
-        # Store results in session state
-        st.session_state['analysis_result'] = result
-        st.session_state['original_image'] = original_image
+        try:
+            if uploaded_bytes:
+                result = analyze_via_upload_cached(uploaded_bytes, uploaded_media_type, client)
+            else:
+                result = analyze_via_url_cached(image_url, client)
+            
+            if result:
+                # Store results in session state
+                st.session_state['analysis_result'] = result
+                st.session_state['original_image'] = original_image
+            else:
+                st.error("Analysis returned no results")
+
+        except json.JSONDecodeError as e:
+            st.error(f"Failed to parse response: {e}")
+            debug_log(f"JSON error: {str(e)}")
+        except Exception as e:
+            st.error(f"Error analyzing image: {str(e)}")
+            debug_log(f"Error: {str(e)}")
+            
+            with st.expander("🔧 Error Details"):
+                st.code(str(e))
 
     # Display results if they exist in session state
     if 'analysis_result' in st.session_state and 'original_image' in st.session_state:
         display_results(st.session_state['analysis_result'], st.session_state['original_image'])
+    # Analyze button
+    # has_input = bool(image_url) or bool(uploaded_bytes)
+    # if st.button("🔍 Analyze Look", type="primary", use_container_width=True, disabled=not has_input):
+    #     # Store original image for matching
+    #     original_image = uploaded_bytes if uploaded_bytes else image_url
+        
+    #     debug_log("=" * 50)
+    #     debug_log("USING HARDCODED ANALYSIS (TESTING)")
+    #     debug_log("=" * 50)
+        
+    #     # HARDCODED RESULT - Comment out Claude API calls
+    #     result = {
+    #         "items": [
+    #             {
+    #                 "type": "sweater",
+    #                 "color": "multicolor striped",
+    #                 "style": "cropped, v-neck",
+    #                 "material": "knit",
+    #                 "features": ["v-neck", "cropped length", "striped pattern"],
+    #                 "search_keywords": "striped cropped sweater v-neck multicolor knit top"
+    #             }
+    #         ],
+    #         "overall_style": "Casual colorful style",
+    #         "occasion": "Everyday casual wear"
+    #     }
+        
+    #     debug_log(f"✅ Using hardcoded result with {len(result.get('items', []))} items")
+        
+    #     # Store results in session state
+    #     st.session_state['analysis_result'] = result
+    #     st.session_state['original_image'] = original_image
+
+    # # Display results if they exist in session state
+    # if 'analysis_result' in st.session_state and 'original_image' in st.session_state:
+    #     display_results(st.session_state['analysis_result'], st.session_state['original_image'])
 if __name__ == "__main__":
     main()
